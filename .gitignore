@@ -1,3 +1,8 @@
 front/node_modules
 .DS_Store
 .git
+front/.env
+front/.next
+front/package-lock.json
+front/.eslintrc
+front/.prettierrc
