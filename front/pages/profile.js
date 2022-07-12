@@ -1,10 +1,17 @@
+import Head from 'next/head';
 import AppLayout from '../components/AppLayout';
 
 const Profile = () => {
   return (
-    <AppLayout>
-      <div>Profile</div>
-    </AppLayout>
+    <>
+      <Head>
+        <meta charSet="utf-8" />
+        <title>My Profile</title>
+      </Head>
+      <AppLayout>
+        <div>Profile</div>
+      </AppLayout>
+    </>
   );
 };
 

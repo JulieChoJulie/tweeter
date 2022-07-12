@@ -1,10 +1,17 @@
+import Head from 'next/head';
 import AppLayout from '../components/AppLayout';
 
 const Signup = () => {
   return (
-    <AppLayout>
-      <div>Signup</div>
-    </AppLayout>
+    <>
+      <Head>
+        <meta charSet="utf-8" />
+        <title>Sign up</title>
+      </Head>
+      <AppLayout>
+        <div>Signup</div>
+      </AppLayout>
+    </>
   );
 };
 
