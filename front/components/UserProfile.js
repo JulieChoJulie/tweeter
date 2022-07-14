@@ -35,7 +35,7 @@ const UserProfile = ({ setIsLoggedIn }) => {
 };
 
 UserProfile.propTypes = {
-  setIsLoggedIn: PropTypes.bool,
+  setIsLoggedIn: PropTypes.func,
 };
 
 export default UserProfile;
