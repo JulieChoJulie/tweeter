@@ -22,9 +22,15 @@ export const initialState = {
       Comments: [
         {
           User: {
-            nicname: 'simon',
+            nickname: 'simon',
           },
           content: 'Hiiiiii~',
+        },
+        {
+          User: {
+            nickname: 'julie',
+          },
+          content: 'hey~',
         },
       ],
     },

@@ -1,7 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import PostImages from './PostImages';
-import { Avatar, Button, Card, Popover } from 'antd';
+import CommentForm from './CommentForm';
+import { Avatar, Button, Card, List, Popover, Comment } from 'antd';
 import {
   RetweetOutlined,
   HeartOutlined,
@@ -65,9 +66,25 @@ const PostCard = ({ post }) => {
         />
         <Button></Button>
       </Card>
-      {commentFormOpened && <div>Comments Opened</div>}
-      {/* <CommentForm />
-      <Comments /> */}
+      {commentFormOpened && (
+        <div>
+          <CommentForm post={post} />
+          <List
+            header={`${post.Comments.length} comments`}
+            itemLayout="horizontal"
+            dataSource={post.Comments}
+            renderItem={(item) => (
+              <li>
+                <Comment
+                  author={item.User.nickname}
+                  avatar={<Avatar>{item.User.nickname[0]}</Avatar>}
+                  content={item.content}
+                />
+              </li>
+            )}
+          />
+        </div>
+      )}
     </div>
   );
 };
