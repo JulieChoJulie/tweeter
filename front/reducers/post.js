@@ -13,7 +13,7 @@ export const initialState = {
           src: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6Z4r5sQzaBUhn6Pp5g4NAUrlpTabped-mki-yjVmA1w&s=36`,
         },
         {
-          src: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6Z4r5sQzaBUhn6Pp5g4NAUrlpTabped-mki-yjVmA1w&s=36`,
+          src: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT62vFwrvocJ8ORkpsLrnq8-W6GSmkcpVpIxQ&usqp=CAU`,
         },
         {
           src: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6Z4r5sQzaBUhn6Pp5g4NAUrlpTabped-mki-yjVmA1w&s=36`,
