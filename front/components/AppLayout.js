@@ -14,14 +14,6 @@ const Global = createGlobalStyle`
     margin-left: 0 !important;
     margin-right: 0 !important;
   }
-  
-  .ant-col:first-child {
-    padding-left: 0 !important;
-  }
-
-  .ant-col:last-child {
-    padding-right: 0 !important;
-  }
 `;
 
 const SearchInput = styled(Input.Search)`
@@ -54,7 +46,7 @@ const AppLayout = ({ children }) => {
           </Link>
         </Menu.Item>
       </Menu>
-      <Row gutter={8}>
+      <Row gutter={24}>
         <Col xs={24} md={6}>
           {isLoggedIn ? <UserProfile /> : <LoginForm />}
         </Col>
