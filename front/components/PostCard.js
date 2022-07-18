@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import PostImages from './PostImages';
 import CommentForm from './CommentForm';
+import PostCardContent from './PostCardContent';
 import { Avatar, Button, Card, List, Popover, Comment } from 'antd';
 import {
   RetweetOutlined,
@@ -60,7 +61,7 @@ const PostCard = ({ post }) => {
         ]}
       >
         <Card.Meta
-          description={post.content}
+          description={<PostCardContent postContent={post.content} />}
           title={post.User.nickname}
           avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
         />
