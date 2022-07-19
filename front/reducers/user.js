@@ -2,9 +2,10 @@ export const initialState = {
   isLoggedIn: false,
   isLoggingIn: false,
   isLoggingOut: false,
+  logInError: null,
+  logOutError: null,
   me: null,
   signUpData: {},
-  logInData: {},
 };
 
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
@@ -27,6 +28,15 @@ export const UNFOLLOW_REQUEST = 'UNFOLLOW_REQUEST';
 export const UNFOLLOW_SUCCESS = 'UNFOLLOW_SUCCESS';
 export const UNFOLLOW_FAILURE = 'UNFOLLOW_FAILURE';
 
+const dummyUser = (data) => ({
+  ...data,
+  nickname: 'julie',
+  id: 1,
+  Posts: [],
+  Followings: [],
+  Followers: [],
+});
+
 export const loginRequestAction = (data) => {
   return {
     type: LOG_IN_REQUEST,
@@ -47,19 +57,20 @@ const reducer = (state = initialState, action) => {
         ...state,
         me: action.data,
         isLoggingIn: true,
+        logInError: null,
       };
     case LOG_IN_SUCCESS:
       return {
         ...state,
         isLoggedIn: true,
         isLoggingIn: false,
-        me: { ...action.data, nickname: 'julie' },
+        me: dummyUser(action.data),
       };
     case LOG_IN_FAILURE:
       return {
         ...state,
         isLoggingIn: false,
-        me: null,
+        logInError: action.error,
       };
     case LOG_OUT_REQUEST:
       return {
@@ -77,8 +88,20 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         isLoggingOut: false,
+        logOutError: action.error,
       };
-
+    case SIGN_UP_REQUEST:
+      return {
+        ...state,
+      };
+    case SIGN_UP_SUCCESS:
+      return {
+        ...state,
+      };
+    case SIGN_UP_FAILURE:
+      return {
+        ...state,
+      };
     default:
       return state;
   }
