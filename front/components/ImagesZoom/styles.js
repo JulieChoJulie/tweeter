@@ -47,7 +47,7 @@ export const ImgWrapper = styled.div`
     margin: 0 auto;
     min-height: 35vh;
     min-width: 25vw;
-    max-height: 800px;
+    max-height: 70vh;
     max-width: 1000px;
   }
 `;
