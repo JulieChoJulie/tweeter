@@ -6,6 +6,7 @@ import useInput from '../hooks/useInput';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { signupRequestAction } from '../reducers/user';
+import Router from 'next/router';
 
 const ErrorMessage = styled.div`
   color: red;
@@ -13,12 +14,18 @@ const ErrorMessage = styled.div`
 
 const Signup = () => {
   const dispatch = useDispatch();
-  const { signUpLoading } = useSelector((state) => state.user);
+  const { signUpLoading, isLoggedIn } = useSelector((state) => state.user);
   const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
   const [password, onChangePassword] = useInput('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState(false);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      Router.push('/');
+    }
+  }, [isLoggedIn]);
 
   const onChangeConfirmPassword = useCallback(
     (e) => {

@@ -32,18 +32,21 @@ const AppLayout = ({ children }) => {
             <a>Twitter</a>
           </Link>
         </Menu.Item>
-        <Menu.Item key="/profile">
-          <Link href="/profile">
-            <a>Profile</a>
-          </Link>
-        </Menu.Item>
+        {isLoggedIn ? (
+          <Menu.Item key="/profile">
+            <Link href="/profile">
+              <a>Profile</a>
+            </Link>
+          </Menu.Item>
+        ) : (
+          <Menu.Item key="/signup">
+            <Link href="/signup">
+              <a>Signup</a>
+            </Link>
+          </Menu.Item>
+        )}
         <Menu.Item>
           <SearchInput enterButton />
-        </Menu.Item>
-        <Menu.Item key="/signup">
-          <Link href="/signup">
-            <a>Signup</a>
-          </Link>
         </Menu.Item>
       </Menu>
       <Row gutter={24}>
