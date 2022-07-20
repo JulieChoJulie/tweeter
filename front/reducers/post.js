@@ -1,4 +1,5 @@
 import shortId from 'shortid';
+import produce from 'immer';
 
 export const initialState = {
   isAddingPost: false,
@@ -84,80 +85,58 @@ const dummyComment = (data) => ({
 });
 
 const reducer = (state = initialState, action) => {
-  switch (action.type) {
-    case ADD_POST_REQUEST:
-      return {
-        ...state,
-        addedPost: false,
-        isAddingPost: true,
-        addPostError: null,
-      };
-    case ADD_POST_SUCCESS:
-      return {
-        ...state,
-        isAddingPost: false,
-        addedPost: true,
-        mainPosts: [dummyPost(action.data), ...state.mainPosts],
-      };
-    case ADD_POST_FAILURE:
-      return {
-        ...state,
-        isAddingPost: false,
-        addPostError: action.error,
-      };
-    case REMOVE_POST_REQUEST:
-      return {
-        ...state,
-        removedPost: false,
-        isRemovingPost: true,
-        removePostError: null,
-      };
-    case REMOVE_POST_SUCCESS:
-      return {
-        ...state,
-        isRemovingPost: false,
-        removedPost: true,
-        mainPosts: state.mainPosts.filter((v) => v.id !== action.data.id),
-      };
-    case REMOVE_POST_FAILURE:
-      return {
-        ...state,
-        isAddingPost: false,
-        removePostError: action.error,
-      };
-    case ADD_COMMENT_REQUEST:
-      return {
-        ...state,
-        addedComment: false,
-        isAddingComment: true,
-        addCommentError: null,
-      };
-    case ADD_COMMENT_SUCCESS: {
-      const postIndex = state.mainPosts.findIndex(
-        (y) => y.id === action.data.postId,
-      );
-      const post = { ...state.mainPosts[postIndex] };
-      post.Comments = [dummyComment(action.data.content), ...post.Comments];
-      const mainPosts = [...state.mainPosts];
-      mainPosts[postIndex] = post;
-
-      return {
-        ...state,
-        isAddingComment: false,
-        addedComment: true,
-        mainPosts,
-      };
+  return produce(state, (draft) => {
+    switch (action.type) {
+      case ADD_POST_REQUEST:
+        draft.addedPost = false;
+        draft.isAddingPost = true;
+        draft.addPostError = null;
+        break;
+      case ADD_POST_SUCCESS:
+        draft.isAddingPost = false;
+        draft.addedPost = true;
+        draft.mainPosts.unshift(dummyPost(action.data));
+        break;
+      case ADD_POST_FAILURE:
+        draft.isAddingPost - false;
+        draft.addPostError = action.error;
+        break;
+      case REMOVE_POST_REQUEST:
+        draft.removedPost = false;
+        draft.isRemovingPost = true;
+        draft.removePostError = null;
+        break;
+      case REMOVE_POST_SUCCESS:
+        draft.isRemovingPost = false;
+        draft.removedPost = true;
+        draft.mainPosts = draft.mainPosts.filter(
+          (v) => v.id !== action.data.id,
+        );
+        break;
+      case REMOVE_POST_FAILURE:
+        draft.isAddingPost = false;
+        draft.removePostError = action.error;
+        break;
+      case ADD_COMMENT_REQUEST:
+        draft.addedComment = false;
+        draft.isAddingComment = true;
+        draft.addCommentError = null;
+        break;
+      case ADD_COMMENT_SUCCESS: {
+        const post = draft.mainPosts.find((p) => p.id === action.data.postId);
+        post.Comments.unshift(dummyComment(action.data.content));
+        draft.addedComment = true;
+        draft.isAddingComment = false;
+        break;
+      }
+      case ADD_COMMENT_FAILURE:
+        draft.isAddingComment = false;
+        draft.addCommentError = action.error;
+        break;
+      default:
+        break;
     }
-    case ADD_COMMENT_FAILURE:
-      return {
-        ...state,
-        isAddingComment: false,
-        addCommentError: action.error,
-      };
-
-    default:
-      return state;
-  }
+  });
 };
 
 export default reducer;
