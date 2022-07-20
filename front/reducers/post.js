@@ -4,6 +4,9 @@ export const initialState = {
   isAddingPost: false,
   addedPost: false,
   addPostError: null,
+  isRemovingPost: false,
+  removedPost: false,
+  removePostError: null,
   isAddingComment: false,
   addedComment: false,
   addCommentError: null,
@@ -50,16 +53,18 @@ export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
 export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS';
 export const ADD_POST_FAILURE = 'ADD_POST_FAILURE';
 
+export const REMOVE_POST_REQUEST = 'REMOVE_POST_REQUEST';
+export const REMOVE_POST_SUCCESS = 'REMOVE_POST_SUCCESS';
+export const REMOVE_POST_FAILURE = 'REMOVE_POST_FAILURE';
+
 export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
 export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
 
 const dummyPost = (data) => {
-  console.log('reducer post');
-  console.log(data);
   return {
-    id: shortId.generate(),
-    content: data,
+    id: data.id,
+    content: data.content,
     User: {
       id: 1,
       nickname: 'julie',
@@ -100,6 +105,26 @@ const reducer = (state = initialState, action) => {
         isAddingPost: false,
         addPostError: action.error,
       };
+    case REMOVE_POST_REQUEST:
+      return {
+        ...state,
+        removedPost: false,
+        isRemovingPost: true,
+        removePostError: null,
+      };
+    case REMOVE_POST_SUCCESS:
+      return {
+        ...state,
+        isRemovingPost: false,
+        removedPost: true,
+        mainPosts: state.mainPosts.filter((v) => v.id !== action.data.id),
+      };
+    case REMOVE_POST_FAILURE:
+      return {
+        ...state,
+        isAddingPost: false,
+        removePostError: action.error,
+      };
     case ADD_COMMENT_REQUEST:
       return {
         ...state,
@@ -108,14 +133,6 @@ const reducer = (state = initialState, action) => {
         addCommentError: null,
       };
     case ADD_COMMENT_SUCCESS: {
-      // const cond = (y) => y === action.data.postId;
-      // const postIndex = state.mainPosts.findIndex(cond);
-      // console.log(postIndex);
-      // const mainPosts = [...state.mainPosts];
-      // const post = { ...mainPosts[postIndex] };
-      // const Comments = [dummyComment(action.data.content), ...post.Comments];
-      // mainPosts[postIndex] = { ...post, Comments };
-
       const postIndex = state.mainPosts.findIndex(
         (y) => y.id === action.data.postId,
       );

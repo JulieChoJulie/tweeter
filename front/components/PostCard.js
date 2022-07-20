@@ -11,10 +11,13 @@ import {
   MessageOutlined,
   EllipsisOutlined,
 } from '@ant-design/icons';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { REMOVE_POST_REQUEST } from '../reducers/post';
 
 const PostCard = ({ post }) => {
+  const dispatch = useDispatch();
   const id = useSelector((state) => state.user.me?.id);
+  const { isRemovingPost } = useSelector((state) => state.post);
   const [liked, setLiked] = useState(false);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
 
@@ -23,6 +26,13 @@ const PostCard = ({ post }) => {
   }, []);
   const onToggleComments = useCallback(() => {
     setCommentFormOpened((prev) => !prev);
+  }, []);
+
+  const onDeletePost = useCallback(() => {
+    dispatch({
+      type: REMOVE_POST_REQUEST,
+      data: post.id,
+    });
   }, []);
 
   return (
@@ -48,7 +58,13 @@ const PostCard = ({ post }) => {
                 {id && id === post.User.id ? (
                   <>
                     <Button>Edit</Button>
-                    <Button type="danger">Delete</Button>
+                    <Button
+                      type="danger"
+                      loading={isRemovingPost}
+                      onClick={onDeletePost}
+                    >
+                      Delete
+                    </Button>
                   </>
                 ) : (
                   <Button>Report</Button>
