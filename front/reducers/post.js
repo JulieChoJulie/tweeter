@@ -3,6 +3,7 @@ import produce from 'immer';
 import faker from 'faker';
 
 export const initialState = {
+  hasMorePosts: true,
   isAddingPost: false,
   addedPost: false,
   addPostError: null,
@@ -12,47 +13,16 @@ export const initialState = {
   isAddingComment: false,
   addedComment: false,
   addCommentError: null,
-  mainPosts: [
-    {
-      id: 1,
-      User: {
-        nickname: 'julie',
-      },
-      createdAt: {},
-      content: 'my first post #hashtag #express',
-      Images: [
-        {
-          src: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6Z4r5sQzaBUhn6Pp5g4NAUrlpTabped-mki-yjVmA1w&s=36`,
-        },
-        {
-          src: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT62vFwrvocJ8ORkpsLrnq8-W6GSmkcpVpIxQ&usqp=CAU`,
-        },
-        {
-          src: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6Z4r5sQzaBUhn6Pp5g4NAUrlpTabped-mki-yjVmA1w&s=36`,
-        },
-      ],
-      Comments: [
-        {
-          User: {
-            nickname: 'simon',
-          },
-          content: 'Hiiiiii~',
-        },
-        {
-          User: {
-            nickname: 'julie',
-          },
-          content: 'hey~',
-        },
-      ],
-    },
-  ],
+  isLoadingPosts: false,
+  loadedPosts: false,
+  loadPostsError: null,
+  mainPosts: [],
   imagePaths: [],
   postAdded: false,
 };
 
-initialState.mainPosts = initialState.mainPosts.concat(
-  Array(20)
+export const generateDummyPosts = (number) =>
+  Array(number)
     .fill()
     .map(() => ({
       id: shortId.generate(),
@@ -75,8 +45,7 @@ initialState.mainPosts = initialState.mainPosts.concat(
           content: faker.lorem.sentence(),
         },
       ],
-    })),
-);
+    }));
 
 export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
 export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS';
@@ -89,6 +58,10 @@ export const REMOVE_POST_FAILURE = 'REMOVE_POST_FAILURE';
 export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
 export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
+
+export const LOAD_POSTS_REQUEST = 'LOAD_POSTS_REQUEST';
+export const LOAD_POSTS_SUCCESS = 'LOAD_POSTS_SUCCESS';
+export const LOAD_POSTS_FAILURE = 'LOAD_P0STS_FAILURE';
 
 const dummyPost = (data) => {
   return {
@@ -160,6 +133,22 @@ const reducer = (state = initialState, action) => {
       case ADD_COMMENT_FAILURE:
         draft.isAddingComment = false;
         draft.addCommentError = action.error;
+        break;
+      case LOAD_POSTS_REQUEST:
+        draft.loadedPosts = false;
+        draft.isLoadingPosts = true;
+        draft.loadPostsError = null;
+        break;
+      case LOAD_POSTS_SUCCESS: {
+        draft.mainPosts = draft.mainPosts.concat(action.data);
+        draft.loadedPosts = true;
+        draft.isLoadingPosts = false;
+        draft.hasMorePosts = draft.mainPosts.length < 50;
+        break;
+      }
+      case LOAD_POSTS_FAILURE:
+        draft.isLoadingPosts = false;
+        draft.loadPostsError = action.error;
         break;
       default:
         break;
