@@ -4,13 +4,17 @@ import AppLayout from '../components/AppLayout';
 import { Form, Input, Checkbox, Button } from 'antd';
 import useInput from '../hooks/useInput';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import { signupRequestAction } from '../reducers/user';
 
 const ErrorMessage = styled.div`
   color: red;
 `;
 
 const Signup = () => {
-  const [id, onChangeId] = useInput('');
+  const dispatch = useDispatch();
+  const { signUpLoading } = useSelector((state) => state.user);
+  const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
   const [password, onChangePassword] = useInput('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -43,16 +47,23 @@ const Signup = () => {
     if (!term) {
       return setTermError(true);
     }
-  }, [id, password, term, confirmPassword]);
+    dispatch(signupRequestAction({ email, password, nickname }));
+  }, [email, password, term, confirmPassword, nickname]);
 
   return (
     <AppLayout>
       <Head>Sign up * Twitter</Head>
       <Form onFinish={onSubmit}>
         <div>
-          <label>Id</label>
+          <label>Email</label>
           <br />
-          <Input name="user-id" value={id} required onChange={onChangeId} />
+          <Input
+            name="user-email"
+            type="email"
+            value={email}
+            required
+            onChange={onChangeEmail}
+          />
         </div>
         <div>
           <label>Nickname</label>
@@ -105,7 +116,7 @@ const Signup = () => {
           )}
         </div>
         <div style={{ marginTop: 10 }}>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={signUpLoading}>
             Register
           </Button>
         </div>

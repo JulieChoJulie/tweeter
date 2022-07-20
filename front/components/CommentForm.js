@@ -1,15 +1,30 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Form, Input, Button } from 'antd';
 import useInput from '../hooks/useInput';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const CommentForm = ({ post }) => {
+  const dispatch = useDispatch();
   const id = useSelector((state) => state.user.me?.id);
-  const [commentText, onChangeCommentText] = useInput('');
+  const { addedComment, addCommentLoading } = useSelector(
+    (state) => state.post,
+  );
+
+  const [commentText, onChangeCommentText, setCommentText] = useInput('');
+
+  useEffect(() => {
+    if (addedComment) {
+      setCommentText('');
+    }
+  }, [addedComment]);
+
   const onSubmitForm = useCallback(() => {
-    console.log(post.id, commentText);
-  }, [commentText]);
+    dispatch({
+      type: 'ADD_COMMENT_REQUEST',
+      data: { userId: id, postId: post.id, content: commentText },
+    });
+  }, [commentText, id]);
   return (
     <Form onFinish={onSubmitForm}>
       <Form.Item style={{ position: 'relative', margin: 0 }}>
@@ -21,7 +36,8 @@ const CommentForm = ({ post }) => {
         <Button
           type="primary"
           htmlType="submit"
-          style={{ position: 'absolute', right: 0, button: -40 }}
+          style={{ position: 'absolute', right: 0, button: -40, zIndex: 1 }}
+          loading={addCommentLoading}
         >
           Twit
         </Button>
@@ -32,7 +48,7 @@ const CommentForm = ({ post }) => {
 
 CommentForm.propTypes = {
   post: PropTypes.shape({
-    id: PropTypes.number,
+    id: PropTypes.string,
     User: PropTypes.shape({
       id: PropTypes.number,
       nickname: PropTypes.string,
