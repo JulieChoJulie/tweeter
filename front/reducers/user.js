@@ -1,4 +1,5 @@
 import produce from 'immer';
+import shortId from 'shortid';
 
 export const initialState = {
   isLoggedIn: false,
@@ -12,6 +13,12 @@ export const initialState = {
   changeNicknameLoading: false,
   changeNicknameUp: false,
   changeNicknameError: null,
+  followLoading: false,
+  followError: null,
+  followed: false,
+  unfollowLoading: false,
+  unfollowError: null,
+  unfollowed: false,
   me: null,
   signUpData: {},
 };
@@ -49,9 +56,9 @@ const dummyUser = (data) => ({
   id: 1,
   Posts: [{ id: 1 }],
   Followings: [
-    { nickname: 'simon' },
-    { nickname: 'jane' },
-    { nickname: 'mike' },
+    { nickname: 'simon', id: shortId.generate() },
+    { nickname: 'jane', id: shortId.generate() },
+    { nickname: 'mike', id: shortId.generate() },
   ],
   Followers: [{ nickname: 'simon' }, { nickname: 'jane' }],
 });
@@ -136,6 +143,36 @@ const reducer = (state = initialState, action) =>
         break;
       case REMOVE_POST_TO_ME:
         draft.me.Posts = draft.me.Posts.filter((p) => p.id !== action.data);
+        break;
+      case FOLLOW_REQUEST:
+        draft.followLoading = true;
+        draft.followed = false;
+        draft.followError = null;
+        break;
+      case FOLLOW_SUCCESS:
+        draft.followLoading = false;
+        draft.followed = true;
+        draft.me.Followings.push({ id: action.data });
+        break;
+      case FOLLOW_FAILURE:
+        draft.followLoading = false;
+        draft.followError = action.error;
+        break;
+      case UNFOLLOW_REQUEST:
+        draft.unfollowLoading = true;
+        draft.unfollowed = false;
+        draft.unfollowError = null;
+        break;
+      case UNFOLLOW_SUCCESS:
+        draft.unfollowLoading = false;
+        draft.unfollowed = true;
+        draft.me.Followings = draft.me.Followings.filter(
+          (y) => y.id !== action.data,
+        );
+        break;
+      case UNFOLLOW_FAILURE:
+        draft.unfollowLoading = false;
+        draft.unfollowError = action.error;
         break;
       default:
         break;
