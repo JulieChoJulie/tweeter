@@ -14,7 +14,9 @@ const ErrorMessage = styled.div`
 
 const Signup = () => {
   const dispatch = useDispatch();
-  const { signUpLoading, isLoggedIn } = useSelector((state) => state.user);
+  const { signUpLoading, isLoggedIn, signedUp, signUpError } = useSelector(
+    (state) => state.user,
+  );
   const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
   const [password, onChangePassword] = useInput('');
@@ -26,6 +28,18 @@ const Signup = () => {
       Router.push('/');
     }
   }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (signedUp) {
+      Router.push('/');
+    }
+  }, [signedUp]);
+
+  useEffect(() => {
+    if (signUpError) {
+      alert(signUpError);
+    }
+  }, [signUpError]);
 
   const onChangeConfirmPassword = useCallback(
     (e) => {

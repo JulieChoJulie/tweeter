@@ -6,3 +6,10 @@ front/.next
 front/package-lock.json
 front/.eslintrc
 front/.prettierrc
+front/.prettierr
+back/node_modules
+back/package-lock.json
+back/.env
+back/config
+back/migration
+back/seeders
