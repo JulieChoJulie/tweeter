@@ -4,10 +4,12 @@ const cors = require('cors');
 const db = require('./models');
 const postRouter = require('./routes/post');
 const userRouter = require('./routes/user');
+const passportconfig = require('./passport');
 
 dotenv.config();
 
 const app = express();
+passportconfig();
 
 db.sequelize.sync()
     .then(() => {
