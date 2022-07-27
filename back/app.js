@@ -1,6 +1,9 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const passport = require('passport');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
 const db = require('./models');
 const postRouter = require('./routes/post');
 const userRouter = require('./routes/user');
@@ -22,6 +25,14 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); 
+app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(session(({
+    saveUninitialized: false,
+    resave: false,
+    secret: process.env.COOKIE_SECRET
+})));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get('/', (req, res) => {
     res.send('hello express');
