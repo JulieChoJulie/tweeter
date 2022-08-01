@@ -25,13 +25,13 @@ const Signup = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      Router.push('/');
+      Router.replace('/');
     }
   }, [isLoggedIn]);
 
   useEffect(() => {
     if (signedUp) {
-      Router.push('/');
+      Router.replace('/');
     }
   }, [signedUp]);
 
