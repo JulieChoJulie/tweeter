@@ -21,7 +21,8 @@ db.sequelize.sync()
     .catch(console.error);
 
 app.use(cors({
-    origin: '*'
+    origin: 'http://localhost:3000',
+    credentials: true,
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); 
