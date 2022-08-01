@@ -18,6 +18,9 @@ export const initialState = {
   unfollowLoading: false,
   unfollowError: null,
   unfollowed: false,
+  loadUserLoading: false,
+  loadUserError: null,
+  loadedUser: false,
   me: null,
   signUpData: {},
 };
@@ -48,6 +51,10 @@ export const UNFOLLOW_FAILURE = 'UNFOLLOW_FAILURE';
 
 export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
 export const REMOVE_POST_TO_ME = 'REMOVE_POST_TO_ME';
+
+export const LOAD_USER_REQUEST = 'LOAD_USER_REQUEST';
+export const LOAD_USER_SUCCESS = 'LOAD_USER_SUCCESS';
+export const LOAD_USER_FAILURE = 'LOAD_USER_FAILURE';
 
 export const loginRequestAction = (data) => {
   return {
@@ -159,6 +166,20 @@ const reducer = (state = initialState, action) =>
       case UNFOLLOW_FAILURE:
         draft.unfollowLoading = false;
         draft.unfollowError = action.error;
+        break;
+      case LOAD_USER_REQUEST:
+        draft.loadUserLoading = true;
+        draft.loadUserError = null;
+        draft.loadedUser = false;
+        break;
+      case LOAD_USER_SUCCESS:
+        draft.loadUserLoading = false;
+        draft.loadedUser = true;
+        draft.me = action.data;
+        break;
+      case LOAD_USER_FAILURE:
+        draft.loadUserError = action.error;
+        draft.loadUserLoading = false;
         break;
       default:
         break;

@@ -21,7 +21,7 @@ const SearchInput = styled(Input.Search)`
 `;
 
 const AppLayout = ({ children }) => {
-  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
+  const { me } = useSelector((state) => state.user);
 
   return (
     <div>
@@ -32,7 +32,7 @@ const AppLayout = ({ children }) => {
             <a>Twitter</a>
           </Link>
         </Menu.Item>
-        {isLoggedIn ? (
+        {me?.id ? (
           <Menu.Item key="/profile">
             <Link href="/profile">
               <a>Profile</a>
@@ -51,7 +51,7 @@ const AppLayout = ({ children }) => {
       </Menu>
       <Row gutter={24}>
         <Col xs={24} md={6}>
-          {isLoggedIn ? <UserProfile /> : <LoginForm />}
+          {me?.id ? <UserProfile /> : <LoginForm />}
         </Col>
         <Col xs={24} md={12}>
           {children}

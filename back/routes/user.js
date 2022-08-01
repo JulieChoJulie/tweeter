@@ -5,6 +5,34 @@ const { User, Post } = require('../models');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 const router = express.Router();
 
+router.get('/', async (req, res, next) => {
+    try {
+        if (req.user) {
+            const fullUser = await User.findOne({
+                where: { id: req.user.id },
+                attributes: ['id', 'nickname', 'email'],
+                include: [{
+                    model: Post,
+                    attributes: ['id'],
+                }, {
+                    model: User,
+                    as: 'Followings',
+                    attributes: ['id'],
+                }, { 
+                    model: User,
+                    as: 'Followers',
+                    attributes: ['id'],
+                }]
+            });
+            res.status(200).json(fullUser);
+        } else {
+            res.status(200).json(null);
+        }
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
 
 router.post('/login', isNotLoggedIn, (req, res, next) =>{
     passport.authenticate('local', (err, user, info) => {
