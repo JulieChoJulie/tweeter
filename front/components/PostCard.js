@@ -12,7 +12,11 @@ import {
   EllipsisOutlined,
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { REMOVE_POST_REQUEST } from '../reducers/post';
+import {
+  REMOVE_POST_REQUEST,
+  UNLIKE_POST_REQUEST,
+  LIKE_POST_REQUEST,
+} from '../reducers/post';
 import FollowButton from './FollowButton';
 
 const PostCard = ({ post }) => {
@@ -20,12 +24,20 @@ const PostCard = ({ post }) => {
   const id = useSelector((state) => state.user.me?.id);
   const { isRemovingPost } = useSelector((state) => state.post);
   const { me } = useSelector((state) => state.user);
-  const [liked, setLiked] = useState(false);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
 
-  const onToggleLiked = useCallback(() => {
-    setLiked((prev) => !prev);
+  const onDislike = useCallback(() => {
+    dispatch({
+      type: UNLIKE_POST_REQUEST,
+      data: post.id,
+    });
   }, []);
+  const onLike = useCallback(() => {
+    dispatch({
+      type: LIKE_POST_REQUEST,
+      data: post.id,
+    });
+  });
   const onToggleComments = useCallback(() => {
     setCommentFormOpened((prev) => !prev);
   }, []);
@@ -36,6 +48,8 @@ const PostCard = ({ post }) => {
       data: post.id,
     });
   }, []);
+  const userId = useSelector((state) => state.user.me?.id);
+  const liked = post.Likers.find((u) => u.id === userId);
 
   return (
     <div style={{ marginTop: '20px' }}>
@@ -47,10 +61,10 @@ const PostCard = ({ post }) => {
             <HeartTwoTone
               twoToneColor="#eb2f96"
               key="heart"
-              onClick={onToggleLiked}
+              onClick={onDislike}
             />
           ) : (
-            <HeartOutlined key="heart" onClick={onToggleLiked} />
+            <HeartOutlined key="heart" onClick={onLike} />
           ),
           <MessageOutlined key="comment" onClick={onToggleComments} />,
           <Popover
@@ -117,6 +131,7 @@ PostCard.propTypes = {
       id: PropTypes.number,
       nickname: PropTypes.string,
     }),
+    Likers: PropTypes.arrayOf(PropTypes.object),
     content: PropTypes.string,
     createdAt: PropTypes.string,
     Images: PropTypes.arrayOf(PropTypes.object),
