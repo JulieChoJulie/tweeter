@@ -4,15 +4,19 @@ const cors = require('cors');
 const passport = require('passport');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const morgan = require('morgan');
 const db = require('./models');
 const postRouter = require('./routes/post');
 const userRouter = require('./routes/user');
+const postsRouter = require('./routes/posts');
 const passportconfig = require('./passport');
 
 dotenv.config();
 
 const app = express();
 passportconfig();
+
+app.use(morgan('dev'));
 
 db.sequelize.sync()
     .then(() => {
@@ -62,6 +66,7 @@ app.delete('/api/', (req, res) => {
 
 app.use('/post', postRouter);
 app.use('/user', userRouter);
+app.use('/posts', postsRouter);
 
 app.listen(3065, () => {
     console.log('server on!')

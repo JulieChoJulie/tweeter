@@ -19,6 +19,7 @@ const PostCard = ({ post }) => {
   const dispatch = useDispatch();
   const id = useSelector((state) => state.user.me?.id);
   const { isRemovingPost } = useSelector((state) => state.post);
+  const { me } = useSelector((state) => state.user);
   const [liked, setLiked] = useState(false);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
 
@@ -87,7 +88,7 @@ const PostCard = ({ post }) => {
       </Card>
       {commentFormOpened && (
         <div>
-          <CommentForm post={post} />
+          {me?.id && <CommentForm post={post} />}
           <List
             header={`${post.Comments.length} comments`}
             itemLayout="horizontal"
@@ -113,11 +114,11 @@ PostCard.propTypes = {
   post: PropTypes.shape({
     id: PropTypes.number,
     User: PropTypes.shape({
-      id: PropTypes.string,
+      id: PropTypes.number,
       nickname: PropTypes.string,
     }),
     content: PropTypes.string,
-    createdAt: PropTypes.object,
+    createdAt: PropTypes.string,
     Images: PropTypes.arrayOf(PropTypes.object),
     Comments: PropTypes.arrayOf(PropTypes.object),
   }).isRequired,
