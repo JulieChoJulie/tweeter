@@ -27,7 +27,7 @@ function addPostAPI(data) {
 }
 
 function removePostAPI(data) {
-  // return axios.delete('/api/post', data)
+  return axios.delete(`/post/${data}`);
 }
 
 function addCommentAPI(data) {
@@ -69,12 +69,10 @@ function* addPost(action) {
 
 function* removePost(action) {
   try {
-    // const result = yield call(removePostAPI(action.data));
+    const result = yield call(removePostAPI, action.data);
     yield put({
       type: REMOVE_POST_SUCCESS,
-      data: {
-        id: action.data,
-      },
+      data: result.data,
     });
     yield put({
       type: REMOVE_POST_TO_ME,

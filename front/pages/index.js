@@ -9,7 +9,7 @@ import { LOAD_USER_REQUEST } from '../reducers/user';
 
 const Home = () => {
   const dispatch = useDispatch();
-  const { isLoggedIn } = useSelector((state) => state.user);
+  const { me } = useSelector((state) => state.user);
   const { mainPosts, hasMorePosts, isLoadingPosts } = useSelector(
     (state) => state.post,
   );
@@ -59,7 +59,7 @@ const Home = () => {
         <title>Twitter</title>
       </Head>
       <AppLayout>
-        {isLoggedIn && <PostForm />}
+        {me?.id && <PostForm />}
         {mainPosts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}

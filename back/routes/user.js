@@ -92,10 +92,27 @@ router.post('/', isNotLoggedIn, async (req, res, next) => {
     }
 });
 
-router.post('/logout', isLoggedIn, (req, res, next) => {
-    req.logout();
-    req.session.destroy();
+router.post('/logout', isLoggedIn, (req, res) => {
+    req.logout((err)=> {
+        if (err) { return next(err); }
+        res.status(500);
+    });
     res.status(200).send('OK');
-})
+});
+
+router.patch('/nickname', isLoggedIn, async (req, res, next) => {
+    try {
+        await User.update({
+            nickname: req.body.nickname
+        }, {
+            where: { id: req.user.id }
+        });
+        console.log(req.body.data)
+;        res.status(200).json({ nickname: req.body.nickname });
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
 
 module.exports = router;

@@ -124,7 +124,8 @@ const reducer = (state = initialState, action) =>
         draft.changedNickname = false;
         break;
       case CHANGE_NICKNAME_SUCCESS:
-        draft.changeNicknameError = false;
+        draft.me.nickname = action.data.nickname;
+        draft.changeNicknameLoading = false;
         draft.changedNickname = true;
         break;
       case CHANGE_NICKNAME_FAILURE:
