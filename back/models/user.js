@@ -27,7 +27,6 @@ module.exports = class User extends Model {
     static associate(db){
         db.User.hasMany(db.Post);
         db.User.hasMany(db.Comment);
-        // post.addLikers & post.removeLikers
         db.User.belongsToMany(db.Post, {through: 'Like' , as: 'Liked' }); // Users like Posts 
         db.User.belongsToMany(db.User, { through: 'Follow', as: 'Followers', foreignKey: 'followingId' }); 
         db.User.belongsToMany(db.User, { through: 'Follow', as: 'Followings', foreignKey: 'followerId' })

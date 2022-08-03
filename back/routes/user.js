@@ -107,8 +107,71 @@ router.patch('/nickname', isLoggedIn, async (req, res, next) => {
         }, {
             where: { id: req.user.id }
         });
-        console.log(req.body.data)
 ;        res.status(200).json({ nickname: req.body.nickname });
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
+router.patch('/:userId/follow', isLoggedIn, async (req, res, next) => {
+    try {
+        const user = await User.findOne({ where: { id: req.params.userId } });
+        if (!user) {
+            return res.status(404).send('The user is not found.');
+        }
+        await user.addFollowers(req.user.id);
+;       res.status(200).json({ id: parseInt(req.params.userId) });
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
+router.delete('/:userId/unfollow', isLoggedIn, async (req, res, next) => {
+    try {
+        const user = await User.findOne({ where: { id: req.params.userId } });
+        if (!user) {
+            return res.status(404).send('The user is not found.');
+        }
+;       await user.removeFollowers(req.user.id);
+;       res.status(200).json({ id: parseInt(req.params.userId) });
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
+router.delete('/:userId/follower', isLoggedIn, async (req, res, next) => {
+    try {
+        const follower = await User.findOne({ where: { id: req.params.userId } });
+        if (!follower) {
+            return res.status(404).send('The user is not found.');
+        }
+;       await follower.removeFollowings(req.user.id);
+;       res.status(200).json({ id: parseInt(req.params.userId) });
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
+router.get('/followings', isLoggedIn, async (req, res, next) => {
+    try {
+        const user = await User.findOne({ where: { id: req.user.id } });
+        const followings = await user.getFollowings();
+        res.status(200).json(followings);
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
+router.get('/followers', isLoggedIn, async (req, res, next) => {
+    try {
+        const user = await User.findOne({ where: { id: req.user.id } });
+        const followers = await user.getFollowers();
+        res.status(200).json(followers);
     } catch (err) {
         console.error(err);
         next(err);

@@ -2,8 +2,25 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Card, List, Button } from 'antd';
 import { StopOutlined } from '@ant-design/icons';
+import { useDispatch } from 'react-redux';
+import { UNFOLLOW_REQUEST, REMOVE_FOLLOWER_REQUEST } from '../reducers/user';
 
 const FollowList = ({ header, data }) => {
+  const dispatch = useDispatch();
+  const onClick = (id) => {
+    if (header === 'Followings') {
+      dispatch({
+        type: UNFOLLOW_REQUEST,
+        data: id,
+      });
+    } else if (header === 'Followers') {
+      dispatch({
+        type: REMOVE_FOLLOWER_REQUEST,
+        data: id,
+      });
+    }
+  };
+
   return (
     <List
       style={{ marginBottom: 20 }}
@@ -19,7 +36,10 @@ const FollowList = ({ header, data }) => {
       dataSource={data}
       renderItem={(item) => (
         <List.Item style={{ marginTop: 28 }}>
-          <Card actions={[<StopOutlined key="stop" />]}>
+          <Card
+            actions={[<StopOutlined key="stop" />]}
+            onClick={() => onClick(item.id)}
+          >
             <Card.Meta description={item.nickname} />
           </Card>
         </List.Item>

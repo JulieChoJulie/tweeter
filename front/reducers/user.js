@@ -15,6 +15,12 @@ export const initialState = {
   followLoading: false,
   followError: null,
   followed: false,
+  getFollowingsLoading: false,
+  getFollowingsError: null,
+  getFollowingsDone: false,
+  getFollowersLoading: false,
+  getFollowersError: null,
+  getFollowersDone: false,
   unfollowLoading: false,
   unfollowError: null,
   unfollowed: false,
@@ -45,9 +51,21 @@ export const FOLLOW_REQUEST = 'FOLLOW_REQUEST';
 export const FOLLOW_SUCCESS = 'FOLLOW_SUCCESS';
 export const FOLLOW_FAILURE = 'FOLLOW_FAILURE';
 
+export const GET_FOLLOWERS_REQUEST = 'GET_FOLLOWERS_REQUEST';
+export const GET_FOLLOWERS_SUCCESS = 'GET_FOLLOWERS_SUCCESS';
+export const GET_FOLLOWERS_FAILURE = 'GET_FOLLOWERS_FAILURE';
+
+export const GET_FOLLOWINGS_REQUEST = 'GET_FOLLOWINGS_REQUEST';
+export const GET_FOLLOWINGS_SUCCESS = 'GET_FOLLOWINGS_SUCCESS';
+export const GET_FOLLOWINGS_FAILURE = 'GET_FOLLOWINGS_FAILURE';
+
 export const UNFOLLOW_REQUEST = 'UNFOLLOW_REQUEST';
 export const UNFOLLOW_SUCCESS = 'UNFOLLOW_SUCCESS';
 export const UNFOLLOW_FAILURE = 'UNFOLLOW_FAILURE';
+
+export const REMOVE_FOLLOWER_REQUEST = 'REMOVE_FOLLOWER_REQUEST';
+export const REMOVE_FOLLOWER_SUCCESS = 'REMOVE_FOLLOWER_SUCCESS';
+export const REMOVE_FOLLOWER_FAILURE = 'REMOVE_FOLLOWER_FAILURE';
 
 export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
 export const REMOVE_POST_TO_ME = 'REMOVE_POST_TO_ME';
@@ -152,6 +170,34 @@ const reducer = (state = initialState, action) =>
         draft.followLoading = false;
         draft.followError = action.error;
         break;
+      case GET_FOLLOWERS_REQUEST:
+        draft.getFollowersLoading = true;
+        draft.getFollowersDone = false;
+        draft.getFollowersError = null;
+        break;
+      case GET_FOLLOWERS_SUCCESS:
+        draft.getFollowersLoading = false;
+        draft.getFollowersDone = true;
+        draft.me.Followers = action.data;
+        break;
+      case GET_FOLLOWERS_FAILURE:
+        draft.getFollowersLoading = false;
+        draft.getFollowersError = action.error;
+        break;
+      case GET_FOLLOWINGS_REQUEST:
+        draft.getFollowingsLoading = true;
+        draft.getFollowingsDone = false;
+        draft.getFollowingsError = null;
+        break;
+      case GET_FOLLOWINGS_SUCCESS:
+        draft.getFollowingsLoading = false;
+        draft.getFollowingsDone = true;
+        draft.me.Followings = action.data;
+        break;
+      case GET_FOLLOWINGS_FAILURE:
+        draft.getFollowingsLoading = false;
+        draft.getFollowingsError = action.error;
+        break;
       case UNFOLLOW_REQUEST:
         draft.unfollowLoading = true;
         draft.unfollowed = false;
@@ -167,6 +213,22 @@ const reducer = (state = initialState, action) =>
       case UNFOLLOW_FAILURE:
         draft.unfollowLoading = false;
         draft.unfollowError = action.error;
+        break;
+      case REMOVE_FOLLOWER_REQUEST:
+        draft.removeFollowerLoading = true;
+        draft.removeFollowerDone = false;
+        draft.removeFollowerError = null;
+        break;
+      case REMOVE_FOLLOWER_SUCCESS:
+        draft.removeFollowerLoading = false;
+        draft.removeFollowerDone = true;
+        draft.me.Followers = draft.me.Followings.filter(
+          (y) => y.id !== action.data,
+        );
+        break;
+      case REMOVE_FOLLOWER_FAILURE:
+        draft.removeFollowerLoading = false;
+        draft.removeFollowerError = action.error;
         break;
       case LOAD_USER_REQUEST:
         draft.loadUserLoading = true;
