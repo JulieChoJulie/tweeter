@@ -1,4 +1,4 @@
-import { all, fork, put, takeLatest, call, throttle } from 'redux-saga/effects';
+import { all, fork, put, takeLatest, call } from 'redux-saga/effects';
 import {
   ADD_COMMENT_FAILURE,
   ADD_COMMENT_REQUEST,
@@ -18,12 +18,15 @@ import {
   UNLIKE_POST_FAILURE,
   UNLIKE_POST_REQUEST,
   UNLIKE_POST_SUCCESS,
+  UPLOAD_IMAGES_FAILURE,
+  UPLOAD_IMAGES_REQUEST,
+  UPLOAD_IMAGES_SUCCESS,
 } from '../reducers/post';
 import { ADD_POST_TO_ME, REMOVE_POST_TO_ME } from '../reducers/user';
 import axios from 'axios';
 
 function addPostAPI(data) {
-  return axios.post('/post', { content: data });
+  return axios.post('/post', data);
 }
 
 function removePostAPI(data) {
@@ -44,6 +47,10 @@ function likePostAPI(data) {
 
 function unlikePostAPI(data) {
   return axios.patch(`/post/${data}/unlike`);
+}
+
+function uploadImagesAPI(data) {
+  return axios.post('/post/images', data);
 }
 
 function* addPost(action) {
@@ -152,6 +159,22 @@ function* unlikePost(action) {
   }
 }
 
+function* uploadImages(action) {
+  try {
+    const result = yield call(uploadImagesAPI, action.data);
+    yield put({
+      type: UPLOAD_IMAGES_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: UPLOAD_IMAGES_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 function* watchAddPost() {
   yield takeLatest(ADD_POST_REQUEST, addPost);
 }
@@ -165,15 +188,19 @@ function* watchAddComment() {
 }
 
 function* watchLoadPosts() {
-  yield throttle(5000, LOAD_POSTS_REQUEST, loadPosts);
+  yield takeLatest(LOAD_POSTS_REQUEST, loadPosts);
 }
 
 function* watchLikePost() {
-  yield throttle(5000, LIKE_POST_REQUEST, likePost);
+  yield takeLatest(LIKE_POST_REQUEST, likePost);
 }
 
 function* watchUnlikePost() {
-  yield throttle(5000, UNLIKE_POST_REQUEST, unlikePost);
+  yield takeLatest(UNLIKE_POST_REQUEST, unlikePost);
+}
+
+function* watchUploadImages() {
+  yield takeLatest(UPLOAD_IMAGES_REQUEST, uploadImages);
 }
 
 export default function* postSaga() {
@@ -184,5 +211,6 @@ export default function* postSaga() {
     fork(watchLoadPosts),
     fork(watchLikePost),
     fork(watchUnlikePost),
+    fork(watchUploadImages),
   ]);
 }

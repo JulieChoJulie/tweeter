@@ -1,14 +1,49 @@
 const express = require('express');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 const router = express.Router();
 const { Post, Comment, Image, User } = require('../models');
 const { isLoggedIn } = require('./middlewares');
 
-router.post('/', isLoggedIn, async (req, res, next) => {
+try {
+    fs.accessSync('uploads');
+} catch (err) {
+    console.log('No existing uploads folder. creating..');
+    fs.mkdirSync('uploads');
+    console.log('uploads folder has been created.');
+}
+
+const upload = multer({
+    storage: multer.diskStorage({
+        destination(req, file, done) {
+        done(null, 'uploads');
+         }, 
+        filename(req, file, done) { // dog.png
+            const ext = path.extname(file.originalname); // extension .png
+            const basename = path.basename(file.originalname, ext); // filename dog
+            done(null, basename + '_' + new Date().getTime() + ext); // dog15184712891.png
+        } ,
+    }),
+    limit: { fileSize: 20 * 1024 * 1024 }, //20MB
+});
+
+router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
     try {
         const post = await Post.create({
             content: req.body.content,
             UserId: req.user.id,
         });
+
+        if (req.body.image) {
+            if (Array.isArray(req.body.image)) {
+                const images = await Promise.all(req.body.image.map((image) => Image.create({ src: image })));
+                await post.addImages(images);
+            } else {
+                const image = await Image.create({ src: req.body.image });
+                await post.addImages(image);
+            }
+        }
         const fullPost = await Post.findOne({
             where: { id: post.id },
             include: [{
@@ -101,6 +136,15 @@ router.delete('/:postId', isLoggedIn ,async (req, res, next) => {
         next(err);
     }
 });
+
+router.post('/images', isLoggedIn, upload.array('image'), async (req, res, next) => {
+    try {
+        res.json(req.files.map((f) => f.filename));
+    } catch (err) {
+        console.error(err);
+        next(err); 
+    }
+})
 
 
 module.exports = router

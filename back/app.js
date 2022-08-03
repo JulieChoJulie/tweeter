@@ -10,6 +10,7 @@ const postRouter = require('./routes/post');
 const userRouter = require('./routes/user');
 const postsRouter = require('./routes/posts');
 const passportconfig = require('./passport');
+const path = require('path');
 
 dotenv.config();
 
@@ -28,6 +29,8 @@ app.use(cors({
     origin: 'http://localhost:3000',
     credentials: true,
 }));
+
+app.use('/', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); 
 app.use(cookieParser(process.env.COOKIE_SECRET));

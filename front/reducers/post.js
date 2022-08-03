@@ -23,7 +23,12 @@ export const initialState = {
   unlikePostLoading: false,
   unlikePostdone: false,
   unlikePostError: null,
+  uploadImagesLoading: false,
+  uploadImagesdone: false,
+  uploadImagesError: null,
 };
+
+export const REMOVE_IMAGE = 'REMOVE_IMAGE';
 
 export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
 export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS';
@@ -49,6 +54,10 @@ export const UNLIKE_POST_REQUEST = 'UNLIKE_POST_REQUEST';
 export const UNLIKE_POST_SUCCESS = 'UNLIKE_POST_SUCCESS';
 export const UNLIKE_POST_FAILURE = 'UNLIKE_POST_FAILURE';
 
+export const UPLOAD_IMAGES_REQUEST = 'UPLOAD_IMAGES_REQUEST';
+export const UPLOAD_IMAGES_SUCCESS = 'UPLOAD_IMAGES_SUCCESS';
+export const UPLOAD_IMAGES_FAILURE = 'UPLOAD_IMAGES_FAILURE';
+
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
@@ -61,6 +70,7 @@ const reducer = (state = initialState, action) => {
         draft.isAddingPost = false;
         draft.addedPost = true;
         draft.mainPosts.unshift(action.data);
+        draft.imagePaths = [];
         break;
       case ADD_POST_FAILURE:
         draft.isAddingPost - false;
@@ -145,6 +155,24 @@ const reducer = (state = initialState, action) => {
       case UNLIKE_POST_FAILURE:
         draft.unlikePostLoading = false;
         draft.unlikePostError = action.error;
+        break;
+      case UPLOAD_IMAGES_REQUEST:
+        draft.uploadImagesdone = false;
+        draft.uploadImagesLoading = true;
+        draft.uploadImagesError = null;
+        break;
+      case UPLOAD_IMAGES_SUCCESS: {
+        draft.imagePaths = action.data;
+        draft.uploadImagesdone = true;
+        draft.uploadImagesLoading = false;
+        break;
+      }
+      case UPLOAD_IMAGES_FAILURE:
+        draft.uploadImagesLoading = false;
+        draft.uploadImagesError = action.error;
+        break;
+      case REMOVE_IMAGE:
+        draft.imagePaths = draft.imagePaths.filter((v, i) => i !== action.data);
         break;
       default:
         break;
