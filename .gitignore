@@ -13,3 +13,4 @@ back/.env
 back/config
 back/migration
 back/seeders
+back/uploads
