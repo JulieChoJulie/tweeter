@@ -19,7 +19,6 @@ const PostImages = ({ images }) => {
           style={{
             maxHeight: '500px',
             minHeight: '300px',
-            width: 'auto',
             marginLeft: 'auto',
             marginRight: 'auto',
           }}
