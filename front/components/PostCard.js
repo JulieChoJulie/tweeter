@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import PostImages from './PostImages';
 import CommentForm from './CommentForm';
@@ -16,6 +16,7 @@ import {
   REMOVE_POST_REQUEST,
   UNLIKE_POST_REQUEST,
   LIKE_POST_REQUEST,
+  RETWEET_REQUEST,
 } from '../reducers/post';
 import FollowButton from './FollowButton';
 
@@ -27,27 +28,48 @@ const PostCard = ({ post }) => {
   const [commentFormOpened, setCommentFormOpened] = useState(false);
 
   const onDislike = useCallback(() => {
-    dispatch({
+    if (!id) {
+      alert('Log in is required.');
+    }
+    return dispatch({
       type: UNLIKE_POST_REQUEST,
       data: post.id,
     });
-  }, []);
+  }, [id]);
+
   const onLike = useCallback(() => {
-    dispatch({
+    if (!id) {
+      alert('Log in is required.');
+    }
+    return dispatch({
       type: LIKE_POST_REQUEST,
       data: post.id,
     });
-  });
+  }, [id]);
+
   const onToggleComments = useCallback(() => {
     setCommentFormOpened((prev) => !prev);
   }, []);
 
   const onDeletePost = useCallback(() => {
-    dispatch({
+    if (!id) {
+      alert('Log in is required.');
+    }
+    return dispatch({
       type: REMOVE_POST_REQUEST,
       data: post.id,
     });
-  }, []);
+  }, [id]);
+
+  const onRetweet = useCallback(() => {
+    if (!id) {
+      alert('Log in is required.');
+    }
+    return dispatch({
+      type: RETWEET_REQUEST,
+      data: post.id,
+    });
+  }, [id]);
   const userId = useSelector((state) => state.user.me?.id);
   const liked = post.Likers.find((u) => u.id === userId);
 
@@ -56,7 +78,7 @@ const PostCard = ({ post }) => {
       <Card
         cover={post.Images[0] && <PostImages images={post.Images} />}
         actions={[
-          <RetweetOutlined key="retweet" />,
+          <RetweetOutlined key="retweet" onClick={onRetweet} />,
           liked ? (
             <HeartTwoTone
               twoToneColor="#eb2f96"
@@ -91,13 +113,32 @@ const PostCard = ({ post }) => {
             <EllipsisOutlined />
           </Popover>,
         ]}
+        title={post.RetweetId ? `@${post.User.nickname} retweeted.` : null}
         extra={id && id !== post.User.id && <FollowButton post={post} />}
       >
-        <Card.Meta
-          description={<PostCardContent postContent={post.content} />}
-          title={post.User.nickname}
-          avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
-        />
+        {post.RetweetId && post.Retweet ? (
+          <Card
+            cover={
+              post.Retweet.Images[0] && (
+                <PostImages images={post.Retweet.Images} />
+              )
+            }
+          >
+            <Card.Meta
+              description={
+                <PostCardContent postContent={post.Retweet.content} />
+              }
+              title={post.Retweet.User.nickname}
+              avatar={<Avatar>{post.Retweet.User.nickname[0]}</Avatar>}
+            />
+          </Card>
+        ) : (
+          <Card.Meta
+            description={<PostCardContent postContent={post.content} />}
+            title={post.User.nickname}
+            avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
+          />
+        )}
         <Button></Button>
       </Card>
       {commentFormOpened && (
@@ -127,6 +168,8 @@ const PostCard = ({ post }) => {
 PostCard.propTypes = {
   post: PropTypes.shape({
     id: PropTypes.number,
+    RetweetId: PropTypes.number,
+    Retweet: PropTypes.object,
     User: PropTypes.shape({
       id: PropTypes.number,
       nickname: PropTypes.string,

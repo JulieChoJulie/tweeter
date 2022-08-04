@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AppLayout from '../components/AppLayout';
 import PostCard from '../components/PostCard';
@@ -10,9 +10,20 @@ import { LOAD_USER_REQUEST } from '../reducers/user';
 const Home = () => {
   const dispatch = useDispatch();
   const { me } = useSelector((state) => state.user);
-  const { mainPosts, hasMorePosts, isLoadingPosts } = useSelector(
-    (state) => state.post,
-  );
+  const { mainPosts, hasMorePosts, isLoadingPosts, retweetError, retweetDone } =
+    useSelector((state) => state.post);
+
+  useEffect(() => {
+    if (retweetError) {
+      alert(retweetError);
+    }
+  }, [retweetError]);
+
+  useEffect(() => {
+    if (retweetDone) {
+      window.scrollTo(0, 0);
+    }
+  }, [retweetDone]);
 
   useEffect(() => {
     dispatch({

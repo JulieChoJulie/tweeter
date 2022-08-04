@@ -15,6 +15,9 @@ import {
   REMOVE_POST_FAILURE,
   REMOVE_POST_REQUEST,
   REMOVE_POST_SUCCESS,
+  RETWEET_FAILURE,
+  RETWEET_REQUEST,
+  RETWEET_SUCCESS,
   UNLIKE_POST_FAILURE,
   UNLIKE_POST_REQUEST,
   UNLIKE_POST_SUCCESS,
@@ -51,6 +54,10 @@ function unlikePostAPI(data) {
 
 function uploadImagesAPI(data) {
   return axios.post('/post/images', data);
+}
+
+function retweetAPI(data) {
+  return axios.post(`/post/${data}/retweet`);
 }
 
 function* addPost(action) {
@@ -175,6 +182,26 @@ function* uploadImages(action) {
   }
 }
 
+function* retweet(action) {
+  try {
+    const result = yield call(retweetAPI, action.data);
+    yield put({
+      type: RETWEET_SUCCESS,
+      data: result.data,
+    });
+    yield put({
+      type: ADD_POST_TO_ME,
+      data: result.data.id,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: RETWEET_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 function* watchAddPost() {
   yield takeLatest(ADD_POST_REQUEST, addPost);
 }
@@ -203,6 +230,10 @@ function* watchUploadImages() {
   yield takeLatest(UPLOAD_IMAGES_REQUEST, uploadImages);
 }
 
+function* watchRetweet() {
+  yield takeLatest(RETWEET_REQUEST, retweet);
+}
+
 export default function* postSaga() {
   yield all([
     fork(watchAddPost),
@@ -212,5 +243,6 @@ export default function* postSaga() {
     fork(watchLikePost),
     fork(watchUnlikePost),
     fork(watchUploadImages),
+    fork(watchRetweet),
   ]);
 }
