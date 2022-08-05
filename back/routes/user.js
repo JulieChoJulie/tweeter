@@ -34,38 +34,6 @@ router.get('/', async (req, res, next) => {
     }
 });
 
-router.get('/:userId', async (req, res, next) => {
-    try {
-        const fullUser = await User.findOne({
-            where: { id: req.params.userId },
-            attributes: ['id', 'nickname', 'email'],
-            include: [{
-                model: Post,
-                attributes: ['id'],
-            }, {
-                model: User,
-                as: 'Followings',
-                attributes: ['id'],
-            }, { 
-                model: User,
-                as: 'Followers',
-                attributes: ['id'],
-            }]
-        });
-        if (fullUser) {
-            const data = fullUser.toJSON();
-            data.Posts = data.Posts.length; // protect the user's info
-            data.Followings = data.Followings.length;
-            data.Followers = data.Followers.length;
-            res.status(200).json(data);    
-        } else {
-            res.status(404).json('The user was not found.');
-        }
-    } catch (err) {
-        console.error(err);
-        next(err);
-    }
-});
 
 router.post('/login', isNotLoggedIn, (req, res, next) =>{
     passport.authenticate('local', (err, user, info) => {
@@ -147,6 +115,63 @@ router.patch('/nickname', isLoggedIn, async (req, res, next) => {
     }
 });
 
+router.get('/followings', isLoggedIn, async (req, res, next) => {
+    console.log('-----------------------------')
+    try {
+        const user = await User.findOne({ where: { id: req.user.id } });
+        const followings = await user.getFollowings();
+        res.status(200).json(followings);
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
+router.get('/followers', isLoggedIn, async (req, res, next) => {
+    try {
+        const user = await User.findOne({ where: { id: req.user.id } });
+        const followers = await user.getFollowers();
+        res.status(200).json(followers);
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
+router.get('/:userId', async (req, res, next) => {
+    try {
+        const fullUser = await User.findOne({
+            where: { id: req.params.userId },
+            attributes: ['id', 'nickname', 'email'],
+            include: [{
+                model: Post,
+                attributes: ['id'],
+            }, {
+                model: User,
+                as: 'Followings',
+                attributes: ['id'],
+            }, { 
+                model: User,
+                as: 'Followers',
+                attributes: ['id'],
+            }]
+        });
+        if (fullUser) {
+            const data = fullUser.toJSON();
+            data.Posts = data.Posts.length; // protect the user's
+            data.Followings = data.Followings.length;
+            data.Followers = data.Followers.length;
+            res.status(200).json(data);    
+        } else {
+            res.status(404).json('The user was not found.');
+        }
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
+
 router.patch('/:userId/follow', isLoggedIn, async (req, res, next) => {
     try {
         const user = await User.findOne({ where: { id: req.params.userId } });
@@ -183,28 +208,6 @@ router.delete('/:userId/follower', isLoggedIn, async (req, res, next) => {
         }
 ;       await follower.removeFollowings(req.user.id);
 ;       res.status(200).json({ id: parseInt(req.params.userId) });
-    } catch (err) {
-        console.error(err);
-        next(err);
-    }
-});
-
-router.get('/followings', isLoggedIn, async (req, res, next) => {
-    try {
-        const user = await User.findOne({ where: { id: req.user.id } });
-        const followings = await user.getFollowings();
-        res.status(200).json(followings);
-    } catch (err) {
-        console.error(err);
-        next(err);
-    }
-});
-
-router.get('/followers', isLoggedIn, async (req, res, next) => {
-    try {
-        const user = await User.findOne({ where: { id: req.user.id } });
-        const followers = await user.getFollowers();
-        res.status(200).json(followers);
     } catch (err) {
         console.error(err);
         next(err);

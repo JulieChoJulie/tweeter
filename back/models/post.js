@@ -18,11 +18,15 @@ module.exports = class Post extends Model {
 
     }
     static associate(db) {
+        // post.addUser
         db.Post.belongsTo(db.User); // post writer
         db.Post.hasMany(db.Comment);
+        // post.addImages
         db.Post.hasMany(db.Image);
         db.Post.belongsToMany(db.Hashtag, { through: 'PostHashtag' });
+        // post.addLikers & post.removeLikers
         db.Post.belongsToMany(db.User, { through: 'Like', as: 'Likers' }); // Users like Posts
+        // post.addRetweet
         db.Post.belongsTo(db.Post, { as: 'Retweet' });  // retweet
     }
 };

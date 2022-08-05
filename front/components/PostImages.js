@@ -21,6 +21,7 @@ const PostImages = ({ images }) => {
             minHeight: '300px',
             marginLeft: 'auto',
             marginRight: 'auto',
+            objectFit: 'contain',
           }}
           role="presentation"
           src={`http://localhost:3065/${images[0].src}`}
@@ -34,6 +35,7 @@ const PostImages = ({ images }) => {
   if (images.length === 2) {
     return (
       <>
+        <Global />
         <img
           role="presentation"
           style={{ width: '50%', display: 'inline-block' }}

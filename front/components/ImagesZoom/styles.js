@@ -76,9 +76,6 @@ export const Global = createGlobalStyle`
   .slick-slider {
     height: 90%;
   }
-//   .slick-slide {
-//     height: 0px!important;
-//    }
    .slick-slide.slick-active {
       height: 90% !important;  
    }

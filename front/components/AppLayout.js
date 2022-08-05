@@ -15,6 +15,7 @@ const Global = createGlobalStyle`
   .ant-row {
     margin-left: 0 !important;
     margin-right: 0 !important;
+    margin-top: 10px;
   }
 `;
 
