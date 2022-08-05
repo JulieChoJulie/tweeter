@@ -14,6 +14,9 @@ export const initialState = {
   isLoadingPosts: false,
   loadedPosts: false,
   loadPostsError: null,
+  isLoadingPost: false,
+  loadedPost: false,
+  loadPostError: null,
   mainPosts: [],
   imagePaths: [],
   postAdded: false,
@@ -29,6 +32,7 @@ export const initialState = {
   retweetLoading: false,
   retweetDone: false,
   retweetError: null,
+  singlePost: null,
 };
 
 export const REMOVE_IMAGE = 'REMOVE_IMAGE';
@@ -48,6 +52,10 @@ export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
 export const LOAD_POSTS_REQUEST = 'LOAD_POSTS_REQUEST';
 export const LOAD_POSTS_SUCCESS = 'LOAD_POSTS_SUCCESS';
 export const LOAD_POSTS_FAILURE = 'LOAD_POSTS_FAILURE';
+
+export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
+export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';
+export const LOAD_POST_FAILURE = 'LOAD_POST_FAILURE';
 
 export const LIKE_POST_REQUEST = 'LIKE_POST_REQUEST';
 export const LIKE_POST_SUCCESS = 'LIKE_POST_SUCCESS';
@@ -130,6 +138,22 @@ const reducer = (state = initialState, action) => {
       case LOAD_POSTS_FAILURE:
         draft.isLoadingPosts = false;
         draft.loadPostsError = action.error;
+        break;
+      case LOAD_POST_REQUEST:
+        draft.loadedPost = false;
+        draft.isLoadingPost = true;
+        draft.loadPostError = null;
+        draft.singlePost = null;
+        break;
+      case LOAD_POST_SUCCESS: {
+        draft.loadedPost = true;
+        draft.isLoadingPost = false;
+        draft.singlePost = action.data;
+        break;
+      }
+      case LOAD_POST_FAILURE:
+        draft.isLoadingPost = false;
+        draft.loadPostError = action.error;
         break;
       case LIKE_POST_REQUEST:
         draft.likePostdone = false;

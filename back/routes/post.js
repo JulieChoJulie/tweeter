@@ -78,6 +78,38 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
     }
 });
 
+router.get('/:postId', async(req, res, next) => {
+    try {
+        const post = await Post.findOne({ where: { id: req.params.postId } });
+        if (!post) {
+            return res.status(404).send('The post was not found in the system.');
+        }
+        const fullPost = await Post.findOne({
+            where: { id: req.params.postId },
+            include: [{
+                model: User, // post writer
+                attributes: ['id', 'nickname'],
+            }, {
+                model: Image,
+            }, {
+                model: Comment,
+                include: [{
+                    model: User, // comment writer
+                    attributes: ['id', 'nickname'],
+                }]
+            }, {
+                model: User,
+                as: 'Likers',
+                attributes: ['id']
+            }],
+        });
+        return res.status(200).json(fullPost);
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+})
+
 router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
     try {
         const post = await Post.findOne({
