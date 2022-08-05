@@ -27,8 +27,11 @@ export const initialState = {
   loadUserLoading: false,
   loadUserError: null,
   loadedUser: false,
+  loadMyInfoLoading: false,
+  loadMyInfoError: null,
+  loadedMyInfo: false,
   me: null,
-  signUpData: {},
+  userInfo: null,
 };
 
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
@@ -73,6 +76,10 @@ export const REMOVE_POST_TO_ME = 'REMOVE_POST_TO_ME';
 export const LOAD_USER_REQUEST = 'LOAD_USER_REQUEST';
 export const LOAD_USER_SUCCESS = 'LOAD_USER_SUCCESS';
 export const LOAD_USER_FAILURE = 'LOAD_USER_FAILURE';
+
+export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST';
+export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS';
+export const LOAD_MY_INFO_FAILURE = 'LOAD_MY_INFO_FAILURE';
 
 export const loginRequestAction = (data) => {
   return {
@@ -238,11 +245,25 @@ const reducer = (state = initialState, action) =>
       case LOAD_USER_SUCCESS:
         draft.loadUserLoading = false;
         draft.loadedUser = true;
-        draft.me = action.data;
+        draft.userInfo = action.data;
         break;
       case LOAD_USER_FAILURE:
         draft.loadUserError = action.error;
         draft.loadUserLoading = false;
+        break;
+      case LOAD_MY_INFO_REQUEST:
+        draft.loadMyInfoLoading = true;
+        draft.loadMyInfoError = null;
+        draft.loadedMyInfo = false;
+        break;
+      case LOAD_MY_INFO_SUCCESS:
+        draft.loadMyInfoLoading = false;
+        draft.loadedMyInfo = true;
+        draft.me = action.data;
+        break;
+      case LOAD_MY_INFO_FAILURE:
+        draft.loadMyInfoError = action.error;
+        draft.loadMyInfoLoading = false;
         break;
       default:
         break;
