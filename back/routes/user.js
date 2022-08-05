@@ -34,6 +34,39 @@ router.get('/', async (req, res, next) => {
     }
 });
 
+router.get('/:userId', async (req, res, next) => {
+    try {
+        const fullUser = await User.findOne({
+            where: { id: req.params.userId },
+            attributes: ['id', 'nickname', 'email'],
+            include: [{
+                model: Post,
+                attributes: ['id'],
+            }, {
+                model: User,
+                as: 'Followings',
+                attributes: ['id'],
+            }, { 
+                model: User,
+                as: 'Followers',
+                attributes: ['id'],
+            }]
+        });
+        if (fullUser) {
+            const data = fullUser.toJSON();
+            data.Posts = data.Posts.length; // protect the user's info
+            data.Followings = data.Followings.length;
+            data.Followers = data.Followers.length;
+            res.status(200).json(data);    
+        } else {
+            res.status(404).json('The user was not found.');
+        }
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
 router.post('/login', isNotLoggedIn, (req, res, next) =>{
     passport.authenticate('local', (err, user, info) => {
         if (err) {

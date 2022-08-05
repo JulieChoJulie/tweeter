@@ -67,9 +67,8 @@ function unfollowAPI(data) {
 function removeFollowerAPI(data) {
   return axios.delete(`/user/${data}/follower`);
 }
-
-function loadUserAPI() {
-  return axios.get('/user/userinfo');
+function loadUserAPI(data) {
+  return axios.get(`/user/${data}`);
 }
 
 function loadMyInfoAPI() {
@@ -201,7 +200,7 @@ function* removeFollower(action) {
 
 function* loadUser(action) {
   try {
-    const result = yield call(loadUserAPI);
+    const result = yield call(loadUserAPI, action.data);
     yield put({
       type: LOAD_USER_SUCCESS,
       data: result.data,
