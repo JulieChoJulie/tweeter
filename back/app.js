@@ -9,6 +9,7 @@ const db = require('./models');
 const postRouter = require('./routes/post');
 const userRouter = require('./routes/user');
 const postsRouter = require('./routes/posts');
+const hashtagRouter = require('./routes/hashtag');
 const passportconfig = require('./passport');
 const path = require('path');
 
@@ -70,6 +71,7 @@ app.delete('/api/', (req, res) => {
 app.use('/post', postRouter);
 app.use('/user', userRouter);
 app.use('/posts', postsRouter);
+app.use('/hashtag', hashtagRouter);
 
 app.listen(3065, () => {
     console.log('server on!')

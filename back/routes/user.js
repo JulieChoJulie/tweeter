@@ -1,8 +1,9 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
-const { User, Post } = require('../models');
+const { User, Post, Image, Comment } = require('../models');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
+const { Op } = require('sequelize');
 const router = express.Router();
 
 router.get('/', async (req, res, next) => {
@@ -116,7 +117,6 @@ router.patch('/nickname', isLoggedIn, async (req, res, next) => {
 });
 
 router.get('/followings', isLoggedIn, async (req, res, next) => {
-    console.log('-----------------------------')
     try {
         const user = await User.findOne({ where: { id: req.user.id } });
         const followings = await user.getFollowings();
@@ -213,5 +213,55 @@ router.delete('/:userId/follower', isLoggedIn, async (req, res, next) => {
         next(err);
     }
 });
+
+router.get('/:userId/posts', async(req, res, next) => {
+    try {
+        let where = { UserId: req.params.userId };
+        if (parseInt(req.query.lastId, 10)) {
+            // if it is not initial loading
+            const lastId = parseInt(req.query.lastId, 10);
+            where.id = { [Op.lt]: lastId }
+         }
+
+        const posts = await Post.findAll({
+            where,
+            limit: 10,
+            order: [
+                ['createdAt', 'DESC'],
+                [Comment, 'createdAt', 'DESC'],
+            ],
+            include: [{
+                model: User,
+                attributes: ['id', 'nickname'],
+            }, {
+                model: Image,
+            }, {
+                model: Comment,
+                include: [{
+                    model: User,
+                    attributes: ['id', 'nickname'],
+                }]
+            }, {
+                model: User,
+                as: 'Likers',
+                attributes: ['id']
+            }, {
+                model: Post,
+                as: 'Retweet',
+                include: [{
+                    model: User,
+                    attributes: ['id', 'nickname'],
+                }, {
+                    model: Image,
+                }]
+            }],
+        });
+        res.status(200).json(posts);
+    
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+})
 
 module.exports = router;

@@ -33,6 +33,7 @@ export const initialState = {
   retweetDone: false,
   retweetError: null,
   singlePost: null,
+  postsLength: 0,
 };
 
 export const REMOVE_IMAGE = 'REMOVE_IMAGE';
@@ -52,6 +53,15 @@ export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
 export const LOAD_POSTS_REQUEST = 'LOAD_POSTS_REQUEST';
 export const LOAD_POSTS_SUCCESS = 'LOAD_POSTS_SUCCESS';
 export const LOAD_POSTS_FAILURE = 'LOAD_POSTS_FAILURE';
+
+export const LOAD_USER_POSTS_REQUEST = 'LOAD_USER_POSTS_REQUEST';
+export const LOAD_USER_POSTS_SUCCESS = 'LOAD_USER_POSTS_SUCCESS';
+export const LOAD_USER_POSTS_FAILURE = 'LOAD_USER_POSTS_FAILURE';
+
+export const LOAD_HASHTAG_POSTS_REQUEST = 'LOAD_HASHTAG_POSTS_REQUEST';
+export const LOAD_HASHTAG_POSTS_SUCCESS = 'LOAD_HASHTAG_POSTS_SUCCESS';
+export const LOAD_HASHTAG_POSTS_FAILURE = 'LOAD_HASHTAG_POSTS_FAILURE';
+export const LOAD_HASHTAG_POSTS_LENGTH = 'LOAD_HASHTAG_POSTS_LENGTH';
 
 export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
 export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';
@@ -123,11 +133,15 @@ const reducer = (state = initialState, action) => {
         draft.isAddingComment = false;
         draft.addCommentError = action.error;
         break;
+      case LOAD_USER_POSTS_REQUEST:
+      case LOAD_HASHTAG_POSTS_REQUEST:
       case LOAD_POSTS_REQUEST:
         draft.loadedPosts = false;
         draft.isLoadingPosts = true;
         draft.loadPostsError = null;
         break;
+      case LOAD_USER_POSTS_SUCCESS:
+      case LOAD_HASHTAG_POSTS_SUCCESS:
       case LOAD_POSTS_SUCCESS: {
         draft.mainPosts = draft.mainPosts.concat(action.data);
         draft.loadedPosts = true;
@@ -135,6 +149,12 @@ const reducer = (state = initialState, action) => {
         draft.hasMorePosts = action.data.length === 10;
         break;
       }
+      case LOAD_HASHTAG_POSTS_LENGTH:
+        console.log(action.data);
+        draft.postsLength = action.data;
+        break;
+      case LOAD_USER_POSTS_FAILURE:
+      case LOAD_HASHTAG_POSTS_FAILURE:
       case LOAD_POSTS_FAILURE:
         draft.isLoadingPosts = false;
         draft.loadPostsError = action.error;
