@@ -52,12 +52,12 @@ function followAPI(data) {
   return axios.patch(`/user/${data}/follow`);
 }
 
-function getFollowingsAPI() {
-  return axios.get('/user/followings');
+function getFollowingsAPI(data) {
+  return axios.get(`/user/followings?limit=${data}`);
 }
 
-function getFollowersAPI() {
-  return axios.get('/user/followers');
+function getFollowersAPI(data) {
+  return axios.get(`/user/followers?limit=${data}`);
 }
 
 function unfollowAPI(data) {

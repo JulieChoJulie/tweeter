@@ -119,7 +119,9 @@ router.patch('/nickname', isLoggedIn, async (req, res, next) => {
 router.get('/followings', isLoggedIn, async (req, res, next) => {
     try {
         const user = await User.findOne({ where: { id: req.user.id } });
-        const followings = await user.getFollowings();
+        const followings = await user.getFollowings({
+            limit: parseInt(req.query.limit, 10),
+        });
         res.status(200).json(followings);
     } catch (err) {
         console.error(err);
@@ -130,7 +132,9 @@ router.get('/followings', isLoggedIn, async (req, res, next) => {
 router.get('/followers', isLoggedIn, async (req, res, next) => {
     try {
         const user = await User.findOne({ where: { id: req.user.id } });
-        const followers = await user.getFollowers();
+        const followers = await user.getFollowers({
+            limit: parseInt(req.query.limit, 10),
+        });
         res.status(200).json(followers);
     } catch (err) {
         console.error(err);

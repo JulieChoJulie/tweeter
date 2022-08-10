@@ -8,7 +8,7 @@ import { createGlobalStyle } from 'styled-components';
 
 import UserProfile from '../components/UserProfile';
 import LoginForm from '../components/LoginForm';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import useInput from '../hooks/useInput';
 
 const Global = createGlobalStyle`
@@ -28,7 +28,9 @@ const AppLayout = ({ children }) => {
   const [searchInput, onChangeSearchInput] = useInput('');
   const router = useRouter();
 
-  const onSearch = useCallback(() => {}, []);
+  const onSearch = useCallback(() => {
+    Router.push(`/hashtag/${searchInput}`);
+  }, [searchInput]);
 
   return (
     <div>
@@ -56,6 +58,7 @@ const AppLayout = ({ children }) => {
           {
             label: (
               <SearchInput
+                placeholder="Hashtag Search"
                 enterButton
                 value={searchInput}
                 onChange={onChangeSearchInput}

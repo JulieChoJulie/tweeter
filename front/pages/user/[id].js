@@ -10,6 +10,7 @@ import { useRouter } from 'next/router';
 import AppLayout from '../../components/AppLayout';
 import PostCard from '../../components/PostCard';
 import { Avatar, Card } from 'antd';
+import Link from 'next/link';
 
 const User = () => {
   const dispatch = useDispatch();
@@ -17,7 +18,7 @@ const User = () => {
   const { mainPosts, hasMorePosts, loadUserPostsLoading } = useSelector(
     (state) => state.post,
   );
-  const { userInfo } = useSelector((state) => state.user);
+  const { userInfo, me } = useSelector((state) => state.user);
   const id = router.query.id;
 
   useEffect(() => {
@@ -43,6 +44,18 @@ const User = () => {
     };
   }, [mainPosts.length, hasMorePosts, id, loadUserPostsLoading]);
 
+  if (me) {
+    useEffect(() => {
+      dispatch({
+        type: LOAD_USER_REQUEST,
+        data: id,
+      });
+    }, [me.Followings]);
+  }
+
+  if (!userInfo) {
+    return null;
+  }
   return (
     <AppLayout>
       <Head>
@@ -74,7 +87,13 @@ const User = () => {
           ]}
         >
           <Card.Meta
-            avatar={<Avatar>{userInfo.nickname[0]}</Avatar>}
+            avatar={
+              <Link href={`/user/${userInfo.id}`}>
+                <a>
+                  <Avatar>{userInfo.nickname[0]}</Avatar>
+                </a>
+              </Link>
+            }
             title={userInfo.nickname}
           />
         </Card>

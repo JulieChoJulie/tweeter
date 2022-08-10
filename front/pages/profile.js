@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import Head from 'next/head';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
@@ -15,9 +15,14 @@ import {
 } from '../reducers/user';
 import wrapper from '../store/configureStore';
 
+const fetch = (url) =>
+  axios.get(url, { withCredentials: true }).then((result) => result.data);
+
 const Profile = () => {
   const dispatch = useDispatch();
   const { me } = useSelector((state) => state.user);
+  const [followingsLimit, setFollowingsLimit] = useState(6);
+  const [followersLimit, setFollowersLimit] = useState(6);
 
   useEffect(() => {
     if (!(me && me.id)) {
@@ -25,14 +30,21 @@ const Profile = () => {
     }
   }, [me && me.id]);
 
-  useEffect(() => {
+  const onClickMoreFollowers = useCallback(() => {
     dispatch({
       type: GET_FOLLOWERS_REQUEST,
+      data: followersLimit,
     });
+    setFollowersLimit((prev) => prev + 3);
+  }, [followersLimit]);
+
+  const onClickMoreFollowings = useCallback(() => {
     dispatch({
       type: GET_FOLLOWINGS_REQUEST,
+      data: followingsLimit,
     });
-  }, []);
+    setFollowingsLimit((prev) => prev + 3);
+  }, [followingsLimit]);
 
   if (!me) {
     return null;
@@ -46,8 +58,16 @@ const Profile = () => {
       </Head>
       <AppLayout>
         <NicknameEditForm />
-        <FollowList header="Followers" data={me.Followers} />
-        <FollowList header="Followings" data={me.Followings} />
+        <FollowList
+          header="Followers"
+          data={me.Followers}
+          onClickMore={onClickMoreFollowers}
+        />
+        <FollowList
+          header="Followings"
+          data={me.Followings}
+          onClickMore={onClickMoreFollowings}
+        />
       </AppLayout>
     </>
   );
@@ -63,6 +83,16 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: GET_FOLLOWERS_REQUEST,
+      data: 3,
+    });
+
+    context.store.dispatch({
+      type: GET_FOLLOWINGS_REQUEST,
+      data: 3,
     });
 
     context.store.dispatch(END);

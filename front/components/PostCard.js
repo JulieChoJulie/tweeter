@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
 import PropTypes from 'prop-types';
 import PostImages from './PostImages';
 import CommentForm from './CommentForm';
@@ -129,14 +130,26 @@ const PostCard = ({ post }) => {
                 <PostCardContent postContent={post.Retweet.content} />
               }
               title={post.Retweet.User.nickname}
-              avatar={<Avatar>{post.Retweet.User.nickname[0]}</Avatar>}
+              avatar={
+                <Link href={`/user/${post.Retweet.User.id}`}>
+                  <a>
+                    <Avatar>{post.Retweet.User.nickname[0]}</Avatar>
+                  </a>
+                </Link>
+              }
             />
           </Card>
         ) : (
           <Card.Meta
             description={<PostCardContent postContent={post.content} />}
             title={post.User.nickname}
-            avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
+            avatar={
+              <Link href={`/user/${post.User.id}`}>
+                <a>
+                  <Avatar>{post.User.nickname[0]}</Avatar>
+                </a>
+              </Link>
+            }
           />
         )}
         <Button></Button>
@@ -153,7 +166,13 @@ const PostCard = ({ post }) => {
                 <Comment
                   key={item.id}
                   author={item.User.nickname}
-                  avatar={<Avatar>{item.User.nickname[0]}</Avatar>}
+                  avatar={
+                    <Link href={`/user/${item.User.id}`}>
+                      <a>
+                        <Avatar>{item.User.nickname[0]}</Avatar>
+                      </a>
+                    </Link>
+                  }
                   content={item.content}
                 />
               </li>

@@ -56,7 +56,7 @@ const User = () => {
       </Head>
       {mainPosts ? (
         <Card>
-          <h2>{`#${tag} - ${postsLength + 1} posts found`}</h2>
+          <h2>{`#${tag} - ${postsLength} posts found`}</h2>
         </Card>
       ) : null}
       {mainPosts.map((p) => (
