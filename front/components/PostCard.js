@@ -5,6 +5,7 @@ import PostImages from './PostImages';
 import CommentForm from './CommentForm';
 import PostCardContent from './PostCardContent';
 import { Avatar, Button, Card, List, Popover, Comment } from 'antd';
+import moment from 'moment';
 import {
   RetweetOutlined,
   HeartOutlined,
@@ -125,6 +126,9 @@ const PostCard = ({ post }) => {
               )
             }
           >
+            <div style={{ float: 'right ' }}>
+              {moment(post.createdAt).format('YYY.MM.DD')}
+            </div>
             <Card.Meta
               description={
                 <PostCardContent postContent={post.Retweet.content} />
@@ -140,17 +144,22 @@ const PostCard = ({ post }) => {
             />
           </Card>
         ) : (
-          <Card.Meta
-            description={<PostCardContent postContent={post.content} />}
-            title={post.User.nickname}
-            avatar={
-              <Link href={`/user/${post.User.id}`}>
-                <a>
-                  <Avatar>{post.User.nickname[0]}</Avatar>
-                </a>
-              </Link>
-            }
-          />
+          <>
+            <div style={{ float: 'right ' }}>
+              {moment(post.createdAt).format('YYY.MM.DD')}
+            </div>
+            <Card.Meta
+              description={<PostCardContent postContent={post.content} />}
+              title={post.User.nickname}
+              avatar={
+                <Link href={`/user/${post.User.id}`}>
+                  <a>
+                    <Avatar>{post.User.nickname[0]}</Avatar>
+                  </a>
+                </Link>
+              }
+            />
+          </>
         )}
         <Button></Button>
       </Card>
