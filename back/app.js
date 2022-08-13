@@ -12,13 +12,22 @@ const postsRouter = require('./routes/posts');
 const hashtagRouter = require('./routes/hashtag');
 const passportconfig = require('./passport');
 const path = require('path');
+const hpp = require('hpp');
+const helmet = require('helmet');
+
 
 dotenv.config();
 
 const app = express();
 passportconfig();
 
-app.use(morgan('dev'));
+if (process.env.NODE_ENV === 'production') {
+    app.use(morgan('combined'));
+    app.use(hpp());
+    app.use(helmet());
+} else {
+    app.use(morgan('dev'));
+}
 
 db.sequelize.sync()
     .then(() => {
