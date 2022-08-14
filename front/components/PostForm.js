@@ -7,6 +7,7 @@ import {
   REMOVE_IMAGE,
 } from '../reducers/post';
 import useInput from '../hooks/useInput';
+import { backUrl } from '../config/config';
 
 const PostForm = () => {
   const dispatch = useDispatch();
@@ -90,11 +91,7 @@ const PostForm = () => {
       <div>
         {imagePaths.map((p, i) => (
           <div key={p + i} style={{ display: 'inline-block' }}>
-            <img
-              src={`http://localhost:3065/${p}`}
-              style={{ width: '200px' }}
-              alt={p}
-            />
+            <img src={`${backUrl}/${p}`} style={{ width: '200px' }} alt={p} />
             <div>
               <Button onClick={onRemoveImages(i)}>Remove</Button>
             </div>

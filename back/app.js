@@ -36,7 +36,7 @@ db.sequelize.sync()
     .catch(console.error);
 
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: ['http://localhost:3000', 'http://54.183.9.160'],
     credentials: true,
 }));
 
@@ -82,6 +82,6 @@ app.use('/user', userRouter);
 app.use('/posts', postsRouter);
 app.use('/hashtag', hashtagRouter);
 
-app.listen(3065, () => {
+app.listen(80, () => {
     console.log('server on!')
 })
